@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Go Secure Coding Practice</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <p class="eyebrow">보안 코딩 연습</p>
+        <h1>인증 기반 게시판 · 뱅킹 예제 !!!!!!TEST PAGE!!!!!!</h1>
+        <p class="summary">로그인, 회원가입, 게시글, 계정, 뱅킹 화면을 확인할 수 있는 예제입니다.</p>
+      </header>
+
+      <nav class="nav">
+        <a class="nav-link is-active" data-route-link href="#/login">로그인</a>
+        <a class="nav-link" data-route-link href="#/register">회원가입</a>
+        <a class="nav-link" data-route-link href="#/posts">게시글 목록</a>
+        <a class="nav-link" data-route-link href="#/compose">글 작성</a>
+        <a class="nav-link" data-route-link href="#/detail">글 상세</a>
+        <a class="nav-link" data-route-link href="#/account">내 정보</a>
+        <a class="nav-link" data-route-link href="#/banking">뱅킹</a>
+      </nav>
+
+      <section class="view-stack">
+        <section class="view is-active" data-view="login">
+          <article class="panel narrow">
+            <div class="panel-head">
+              <div>
+                <p class="panel-kicker">로그인</p>
+                <h2>인증 토큰 발급</h2>
+              </div>
+              <span class="tag">POST /api/auth/login</span>
+            </div>
+            <form id="login-form" class="form">
+              <label>
+                <span>아이디</span>
+                <input type="text" name="username" placeholder="alice" />
+              </label>
+              <label>
+                <span>비밀번호</span>
+                <input type="password" name="password" placeholder="alice1234" />
+              </label>
+              <button type="submit">로그인</button>
+            </form>
+          </article>
+        </section>
+
+        <section class="view" data-view="register">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="panel-kicker">회원가입</p>
+                <h2>회원가입 요청</h2>
+              </div>
+              <span class="tag">POST /api/auth/register</span>
+            </div>
+            <form id="register-form" class="form">
+              <div class="grid two compact-grid">
+                <label>
+                  <span>아이디</span>
+                  <input type="text" name="username" placeholder="new-user" />
+                </label>
+                <label>
+                  <span>이름</span>
+                  <input type="text" name="name" placeholder="홍길동" />
+                </label>
+                <label>
+                  <span>이메일</span>
+                  <input type="email" name="email" placeholder="user@example.com" />
+                </label>
+                <label>
+                  <span>전화번호</span>
+                  <input type="text" name="phone" placeholder="010-1234-5678" />
+                </label>
+              </div>
+              <label>
+                <span>비밀번호 (8자리 이상, 숫자 포함)</span>
+                <input type="password" name="password" placeholder="password" />
+              </label>
+              <button type="submit">회원가입 요청 보내기</button>
+            </form>
+          </article>
+        </section>
+
+        <section class="view" data-view="posts">
+          <div class="grid split">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-kicker">게시판</p>
+                  <h2>게시글 목록</h2>
+                </div>
+                <span class="tag">GET /api/posts</span>
+              </div>
+              <div class="actions">
+                <button type="button" id="load-posts">목록 다시 불러오기</button>
+              </div>
+              <div id="post-list" class="card-list"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-kicker">미리보기</p>
+                  <h2>선택한 게시글</h2>
+                </div>
+                <span class="tag">GET /api/posts/:id</span>
+              </div>
+              <div id="post-preview" class="preview-panel empty">
+                <h3>선택한 게시글이 없습니다.</h3>
+                <p>왼쪽 목록에서 게시글을 누르면 상세 응답을 바로 볼 수 있습니다.</p>
+              </div>
+              <div class="actions">
+                <button type="button" class="ghost" id="open-detail">상세 화면 열기</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view="compose">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="panel-kicker">게시글 작성</p>
+                <h2>작성 요청</h2>
+              </div>
+              <span class="tag">POST /api/posts</span>
+            </div>
+            <form id="compose-form" class="form">
+              <label>
+                <span>제목</span>
+                <input type="text" name="title" placeholder="게시글 제목" />
+              </label>
+              <label>
+                <span>내용</span>
+                <textarea name="content" rows="8" placeholder="게시글 내용을 입력하세요."></textarea>
+              </label>
+              <button type="submit">작성 요청 보내기</button>
+            </form>
+          </article>
+        </section>
+
+        <section class="view" data-view="detail">
+          <div class="grid two">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-kicker">게시글 상세</p>
+                  <h2>상세 응답</h2>
+                </div>
+                <span class="tag">GET /api/posts/:id</span>
+              </div>
+              <div id="detail-summary" class="summary-card empty">
+                <h3>선택한 게시글이 없습니다.</h3>
+                <p>먼저 게시글 목록에서 게시글을 선택하세요.</p>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-kicker">수정 / 삭제</p>
+                  <h2>변경 요청</h2>
+                </div>
+                <span class="tag">PUT / DELETE /api/posts/:id</span>
+              </div>
+              <form id="update-form" class="form">
+                <label>
+                  <span>제목</span>
+                  <input type="text" name="title" placeholder="수정 제목" />
+                </label>
+                <label>
+                  <span>내용</span>
+                  <textarea name="content" rows="6" placeholder="수정 내용"></textarea>
+                </label>
+                <div class="actions">
+                  <button type="submit">수정 요청 보내기</button>
+                  <button type="button" class="danger" id="delete-post">삭제 요청 보내기</button>
+                </div>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view="account">
+          <div class="grid two">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-kicker">내 정보</p>
+                  <h2>현재 로그인 사용자</h2>
+                </div>
+                <span class="tag">GET /api/me</span>
+              </div>
+              <button type="button" id="load-me">내 정보 불러오기</button>
+              <div id="session-status" class="session-box">아직 Authorization 토큰이 없습니다.</div>
+              <div id="profile-card" class="summary-card empty">
+                <h3>로그인한 사용자 정보가 표시됩니다.</h3>
+                <p>보호된 API는 Authorization 헤더와 authorization 쿠키를 함께 사용할 수 있습니다.</p>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-kicker">계정 처리</p>
+                  <h2>로그아웃 및 회원탈퇴</h2>
+                </div>
+                <span class="tag">POST /api/auth/logout / withdraw</span>
+              </div>
+              <form id="withdraw-form" class="form">
+                <label>
+                  <span>비밀번호</span>
+                  <input type="password" name="password" placeholder="회원탈퇴 확인 비밀번호" />
+                </label>
+                <div class="actions">
+                  <button type="button" class="ghost" id="logout-button">로그아웃</button>
+                  <button type="submit" class="danger">회원탈퇴 요청</button>
+                </div>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view="banking">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="panel-kicker">뱅킹</p>
+                <h2>입금 · 출금 · 송금</h2>
+              </div>
+              <span class="tag">POST /api/banking/*</span>
+            </div>
+            <div class="grid three">
+              <form id="deposit-form" class="form inset-form">
+                <h3>입금</h3>
+                <label>
+                  <span>금액</span>
+                  <input type="number" min="1" step="1000" name="amount" placeholder="10000" />
+                </label>
+                <button type="submit">입금 요청</button>
+              </form>
+
+              <form id="balance-withdraw-form" class="form inset-form">
+                <h3>출금</h3>
+                <label>
+                  <span>금액</span>
+                  <input type="number" min="1" step="1000" name="amount" placeholder="5000" />
+                </label>
+                <button type="submit" class="ghost">출금 요청</button>
+              </form>
+
+              <form id="transfer-form" class="form inset-form">
+                <h3>송금</h3>
+                <label>
+                  <span>대상 아이디</span>
+                  <input type="text" name="to_username" placeholder="bob" />
+                </label>
+                <label>
+                  <span>금액</span>
+                  <input type="number" min="1" step="1000" name="amount" placeholder="3000" />
+                </label>
+                <button type="submit">송금 요청</button>
+              </form>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <section class="console-panel">
+        <div class="panel-head">
+          <h2>응답 콘솔</h2>
+        </div>
+        <pre id="console-output">API 응답이 여기에 표시됩니다.</pre>
+      </section>
+    </main>
+
+    <script src="/static/common.js"></script>
+    <script src="/static/router.js"></script>
+    <script src="/static/auth.js"></script>
+    <script src="/static/board.js"></script>
+    <script src="/static/compose.js"></script>
+    <script src="/static/post.js"></script>
+    <script src="/static/account.js"></script>
+    <script src="/static/banking.js"></script>
+  </body>
+</html>
